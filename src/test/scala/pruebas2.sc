@@ -80,12 +80,12 @@ val palabras: Seq[Seq[Char]] = Seq(
 )
 */
 
-val seq = Seq('a','c','c','c','a','t','g','g','a','t','a','t','a','t','a','t','a','c','c','c','a','t','a','t','a','t','a','t','a','t','a','t')
+val seq = Seq('a','c','c','c','a','c','g','c','a','c','c','c','a','c','g','c')
 val o = crearOraculo(1)(seq)
 val n = seq.length
 
 //reconstruirCadenaTurbo(n,o)
-reconstruirCadenaTurboAcelerada(n,o)
+reconstruirCadenaMejorado(n,o)
 //reconstruirCadenaTurboMejorada(n,o)
 
 /*
