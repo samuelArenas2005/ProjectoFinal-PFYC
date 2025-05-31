@@ -1,8 +1,14 @@
 import Oraculo.*
+import ReconstCadenas.*
+import ReconstCadenasPar.*
+import common.parallel
+import org.scalameter.*
 
 import scala.util.Random
 
 val random = new Random()
+
+type AlgoritCadena = (Int, Oraculo) => Seq[Char]
 
 def secAlAzar(long:Int, s:Seq[Char]): Seq[Char] = {
   //Crea una secuencia de long caracteres del alfabeto,
@@ -13,11 +19,12 @@ def secAlAzar(long:Int, s:Seq[Char]): Seq[Char] = {
     secAlAzar(long,alfabeto(indiceAzar)+:s)
   }
 }
+
 val costoOraculo = 1
 
-val sec1=Seq('a', 'c', 'c', 'a')
-val sec2 = Seq('a', 'c', 'g', 'c', 'a')
-val sec3=secAlAzar(10,Seq())
+val sec1=Seq('a', 'c')
+val sec2 = Seq('a', 'a', 'a', 'a', 'a','a', 'a', 'a','a', 'a', 'a')
+val sec3=secAlAzar(7,Seq())
 
 val or_1=crearOraculo(costoOraculo)(sec1)
 val or_2=crearOraculo(costoOraculo)(sec2)
@@ -26,6 +33,8 @@ val or_3=crearOraculo(costoOraculo)(sec3)
 reconstruirCadenaIngenuo(sec1.length, or_1)
 reconstruirCadenaIngenuo(sec2.length, or_2)
 reconstruirCadenaIngenuo(sec3.length, or_3)
+
+
 
 def secsCortasParaPruebas(n:Int):Seq[Seq[Char]] = for {
   i <- 1 to n

@@ -2,6 +2,10 @@
 <project version="4">
   <component name="ScalaCompilerConfiguration">
     <option name="separateProdTestSources" value="true" />
-    <profile name="sbt 1" modules="Projecto Final PFYC,Projecto Final PFYC.main,Projecto Final PFYC.test" />
+    <profile name="sbt 1" modules="Projecto Final PFYC" />
+    <profile name="sbt 2" modules="Projecto Final PFYC.main,Projecto Final PFYC.test">
+      <option name="implicitConversions" value="true" />
+      <option name="deprecationWarnings" value="true" />
+    </profile>
   </component>
 </project>
