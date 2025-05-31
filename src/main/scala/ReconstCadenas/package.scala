@@ -20,7 +20,7 @@ package object ReconstCadenas {
         if o(nuevaSubcadena)
       } yield nuevaSubcadena
 
-    /** Construlle recursivamente el conjunto de subcadenass de longitud k validas*/
+    /** Construye recursivamente el conjunto de subcadenass de longitud k validas*/
     def construirSubcadenaValida(cadenasActuales:Set[Seq[Char]], k:Int):Seq[Char] ={
         val siguientesSubcadenas = generarSubcadenasValidas(cadenasActuales)
         siguientesSubcadenas.find(_.length == n) match{
