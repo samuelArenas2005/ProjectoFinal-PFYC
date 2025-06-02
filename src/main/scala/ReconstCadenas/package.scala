@@ -149,7 +149,7 @@ package object ReconstCadenas {
         val nextK = 2 * k
         val filtered: Seq[Seq[Char]] = filtrarTrie(sc, k)
         val valid = filtered.filter(o)
-        valid.find(_.length == n).getOrElse(verificarCadenas(valid, nextK))
+        if(valid.length == n) valid.head else verificarCadenas(valid, nextK)
       }
     }
 

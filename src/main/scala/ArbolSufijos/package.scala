@@ -52,9 +52,9 @@ package object ArbolSufijos {
     def adicionarRec(s: Seq[Char], hijos: List[Trie]): List[Trie] = {
       s match {
         case Nil => hijos
-        case x :: xs => 
+        case x :: xs =>
           hijos.span {
-            case Nodo(c, _, _) => c != x 
+            case Nodo(c, _, _) => c != x
             case Hoja(c, _) => c != x
           } match {
             case (before, Nodo(c, fin, hs) :: after) =>
