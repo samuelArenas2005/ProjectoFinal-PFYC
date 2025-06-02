@@ -142,27 +142,16 @@ package object ReconstCadenas {
     } yield Seq(char, subChar)
 
     // el metodo funciona como una recursion que verifica en bloques de potencias de 2 las cadenas candidatas
-    def verificarCadenas(SC: Seq[Seq[Char]], k: Int): Seq[Char] = {
-      //Entra a este caso cuando el filtro genero cadenas de la misma longitud de la cadena final, por lo que solo basta con encontrar
-      // la cadena final.
-        if (k >= n) {
-          SC.find(o).get
-        } else { // en caso de que el filtro no genero las cadenas candidatas de longitud n, entonces generá nuevas
-          //cadenas
-          val cadenasCandidatas: Seq[Seq[Char]] = for {
-            chain <- SC
-            subChain <- SC
-            if o(chain ++ subChain)
-          } yield chain ++ subChain
-          if (k * 2 < n) { // Una vez generadas verifica si la estas cadenas son de una longitud menor a la buscada
-            // en caso de que si pasará por el filtro que generá cadenas del doble de longitud y se llamará nuevamente
-            // a la función de forma recursiva.
-            val cadenaFiltrada = filtrarTrie(cadenasCandidatas, k * 2)
-            verificarCadenas(cadenaFiltrada, k * 4)
-          } else cadenasCandidatas.head // en el caso de que la cadena generada ya sea el tamaño buscado entonces ya hemos
-          // encontrado nuestra cadena
-        }
+    def verificarCadenas(sc: Seq[Seq[Char]], k: Int): Seq[Char] = {
+      if (k >= n) {
+        sc.find(w => o(w)).getOrElse(Seq.empty)
+      } else {
+        val nextK = 2 * k
+        val filtered: Seq[Seq[Char]] = filtrarTrie(sc, k)
+        val valid = filtered.filter(o)
+        valid.find(_.length == n).getOrElse(verificarCadenas(valid, nextK))
       }
+    }
 
     // Caso necesario para cadenas de longitud 2 debido a que estas se generan en las cadenas iniciales y por lo tanto
     // el filtro ya deberá haberla encontrado.

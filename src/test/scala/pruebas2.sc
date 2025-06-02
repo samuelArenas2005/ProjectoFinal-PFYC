@@ -80,7 +80,7 @@ val palabras: Seq[Seq[Char]] = Seq(
 )
 */
 
-val seq = Seq('g','t','a','c')
+val seq = Seq('g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c')
 val o = crearOraculo(1)(seq)
 val n = seq.length
 
