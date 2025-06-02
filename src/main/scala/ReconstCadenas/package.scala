@@ -1,6 +1,8 @@
 import ArbolSufijos.*
 import Oraculo.*
 
+import scala.annotation.tailrec
+
 
 package object ReconstCadenas {
 
@@ -142,6 +144,7 @@ package object ReconstCadenas {
     } yield Seq(char, subChar)
 
     // el metodo funciona como una recursion que verifica en bloques de potencias de 2 las cadenas candidatas
+    @tailrec
     def verificarCadenas(sc: Seq[Seq[Char]], k: Int): Seq[Char] = {
       if (k >= n) {
         sc.find(w => o(w)).getOrElse(Seq.empty)
@@ -156,7 +159,6 @@ package object ReconstCadenas {
     // Caso necesario para cadenas de longitud 2 debido a que estas se generan en las cadenas iniciales y por lo tanto
     // el filtro ya deberá haberla encontrado.
     if(n>2) verificarCadenas(filtrarTrie(cadenasIniciales,2),4) else cadenasIniciales.head
-
 
   }
 
