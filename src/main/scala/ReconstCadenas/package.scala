@@ -79,66 +79,6 @@ package object ReconstCadenas {
 
   }
 
-
-//  def filtrar(SC: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
-//    def filtroRec(cadena: Seq[Char], c: Int): Boolean = {
-//      if (k / 2 - c != 0) {
-//        if (SC.contains(cadena.slice(k - k / 2 - c, k + k / 2 - c)) &&
-//          SC.contains(cadena.slice(k - k / 2 + c, k + k / 2 + c)))
-//          filtroRec(cadena, c + 1) else false
-//      } else {
-//        true
-//      }
-//    }
-//
-//    val cadenasCandidatas = for {
-//      chain <- SC
-//      subChain <- SC
-//      cadenaAFiltrar = chain ++ subChain
-//      if filtroRec(cadenaAFiltrar, 0)
-//    } yield cadenaAFiltrar
-//
-//    cadenasCandidatas
-//  }
-//
-//  def reconstruirCadenaTurboMejorada(n: Int, o: Oraculo): Seq[Char] = {
-//
-//
-//    val cadenasIniciales = for {
-//      char <- alfabeto
-//      subChar <- alfabeto
-//      if o(Seq(char, subChar))
-//    } yield Seq(char, subChar)
-//
-//    def verificarCadenas(SC:Seq[Seq[Char]],k: Int):Seq[Char] ={
-//        if(k >= n){
-//          val cadenaFinal = for{
-//            cadena <- SC
-//            if o(cadena)
-//          }yield cadena
-//
-//          cadenaFinal.head
-//
-//        }else{
-//          val cadenasCandidatas: Seq[Seq[Char]] = for {
-//            chain <- SC
-//            subChain <- SC
-//            if o(chain ++ subChain)
-//          } yield chain ++ subChain
-//          if (k*2 < n){
-//            val cadenaFiltrada = filtrar(cadenasCandidatas, k * 2)
-//            verificarCadenas(cadenaFiltrada, k*4)
-//          } else cadenasCandidatas.head
-//      }
-//
-//    }
-//
-//    if(n>2) verificarCadenas(filtrar(cadenasIniciales,2),4) else cadenasIniciales.head
-//
-//
-//  }
-
-
   def reconstruirCadenaTurboMejorada(n: Int, o: Oraculo): Seq[Char] = {
     def filtrar(sc: Set[String], k: Int): Set[String] = {
       for {
@@ -178,31 +118,14 @@ package object ReconstCadenas {
   //SC <- Secuencia Candidata
   // Este algoritmo utiliza el arbol de sufijos para ser creado
 
-  def filtrarTrie(SC: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
-    val SCtrie = arbolDeSufijos(SC) // Crea el arbol de sufijos
-
-    //Recibe una cadena candidata nueva y va a determinar si las subcadenas son validas
-    // de no serlo retorna false
-    // De si serlo recorrera todas las otras posibles subcadenas
-    def filtroRec(cadena: Seq[Char], c: Int): Boolean = {
-      if (k / 2 - c != 0) {
-        if (pertenecer(cadena.slice(k - k / 2 - c, k + k / 2 - c), SCtrie) &&
-          pertenecer(cadena.slice(k - k / 2 + c, k + k / 2 + c), SCtrie))
-          filtroRec(cadena, c + 1) else false
-      } else {
-        true
-      }
-    }
-
-    //Genera todas las nuevas cadenas candidatas que va a filtrar
-    val cadenasCandidatas = for {
-      chain <- SC
-      subChain <- SC
-      cadenaAFiltrar = chain ++ subChain
-      if filtroRec(cadenaAFiltrar, 0) // Acá se aplica el filtro
-    } yield cadenaAFiltrar
-
-    cadenasCandidatas
+  def filtrarTrie(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
+    val scTrie = arbolDeSufijos(sc)
+    for {
+      s1 <- sc
+      s2 <- sc
+       s: Seq[Char] = s1 ++ s2
+      if s.sliding(k).forall(sub => pertenecer(sub,scTrie))
+    } yield s
   }
 
   //Este método genera las cadenas en bloques de 2 y va verificando si son pertenecen al oraculo, y asi ir descartando opciones
@@ -223,13 +146,7 @@ package object ReconstCadenas {
       //Entra a este caso cuando el filtro genero cadenas de la misma longitud de la cadena final, por lo que solo basta con encontrar
       // la cadena final.
         if (k >= n) {
-          val cadenaFinal = for {
-            cadena <- SC
-            if o(cadena)
-          } yield cadena
-
-          cadenaFinal.head
-
+          SC.find(o).get
         } else { // en caso de que el filtro no genero las cadenas candidatas de longitud n, entonces generá nuevas
           //cadenas
           val cadenasCandidatas: Seq[Seq[Char]] = for {
