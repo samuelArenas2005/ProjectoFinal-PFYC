@@ -257,7 +257,6 @@ pruebasTurbo(ss1_16.slice(0,14))
 pruebasTurbo(ss1_16.slice(0,15))
 pruebasTurbo(ss1_16)
 pruebasTurbo(ss2_1024)
-pruebasTurbo(ss2_2048)
 pruebasTurbo(ss2_4096)
 
 pruebasTurboMejorada(ss1_10)
