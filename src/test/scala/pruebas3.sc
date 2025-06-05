@@ -6,104 +6,49 @@ import org.scalameter.*
 import scala.util.Random
 import Benchmark.*
 
-
 val random = new Random()
 
-//def secAlAzar(long:Int, s:Seq[Char]): Seq[Char] = {
-//  if (s.length==long) s
-//  else {
-//    val indiceAzar=random.nextInt(4)
-//    secAlAzar(long,alfabeto(indiceAzar)+:s)
-//  }
-//}
-//
-//
-//def secsLargasParaPruebas(n:Int):Seq[Seq[Char]] = for {
-//  i <- 1 to n
-//  s = secAlAzar(math.pow(2,i).toInt,Seq())
-//} yield s
-//
-//val time10 = 10
-//val time100 = 100
-//val time1000 = 1000
-//val sec3 = secsLargasParaPruebas(3)
-//val sec6 = secsLargasParaPruebas(6)
-//val sec10 = secsLargasParaPruebas(10)
-//val sec12 = secsLargasParaPruebas(12)
-//
-//val umbral = 2
-//
-//
-////for{
-////  secuencia <- sec3
-////  o = crearOraculo(time10)(secuencia)
-////}yield ("Longitud: " + secuencia.length ,compararAlgoritmosPar(
-////  reconstruirCadenaIngenuo,reconstruirCadenaIngenuoPar
-////)(umbral)(secuencia.length,o))
-//
-//for{
-//  secuencia <- sec3
-//  o = crearOraculo(time10)(secuencia)
-//}yield ("Longitud: " + secuencia.length ,compararAlgoritmosSec(
-//  reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada
-//)(secuencia.length,o))
+//METODO DE COMPARACION DE ALGORITMOS
 
-
-
-//METODO DE COMPARACION DOS
+//METODO PARA GENERAR CADENAS
 
 def generarSecuencia(n: Int): Seq[Char] = {
   val longitud = math.pow(2, n).toInt
   Seq.fill(longitud)(alfabeto(Random.nextInt(alfabeto.length)))
 }
 
-def secAlAzar(long:Int, s:Seq[Char]): Seq[Char] = {
-  if (s.length==long) s
-  else {
-    val indiceAzar=random.nextInt(4)
-    secAlAzar(long,alfabeto(indiceAzar)+:s)
-  }
+
+//METODO PARA GENERAR LA PRUEBA
+
+def generarPrueba(MIN:Int,MAX:Int,nPrueba: Int, algorSec:(Int,Oraculo) => Seq[Char],
+                  algorPar:Int=>(Int,Oraculo) => Seq[Char], umbral:Int ) : Seq[String] = {
+  val reportes = for {
+      l <- MIN to MAX
+      n <- 1 to nPrueba
+      secuencia = generarSecuencia(l)
+      o = crearOraculo(1)(secuencia)
+      resultado = compararAlgoritmosPar(
+        algorSec,
+        algorPar
+      )(umbral)(secuencia.length, o)
+    } yield s"Cadenas ${secuencia.length} | Prueba $n | Resultado: $resultado"
+
+    reportes
 }
 
-def secsLargasParaPruebas(n:Int):Seq[Seq[Char]] = for {
-  i <- 1 to n
-  s = secAlAzar(math.pow(2,i).toInt,Seq())
-} yield s
+/*
+* Generar Prueba recibe 6 parametros:
+* 1. longitud minima de los caracteres que se van a probar
+* 2. longitud Maxima de los caracteres que se van a probar
+* 3. numero de pruebas maximas que se van a hacer, de 1 hasta el valor ingresado
+* 4. algoritmo secuencial a comparar
+* 5. algoritmo paralelo a comparar
+* 6. umbral del algoritmo secuencial
+* */
 
-val umbral = 2
+val generarPruebas:Seq[String] = generarPrueba(6,8,3,reconstruirCadenaMejorado,reconstruirCadenaMejoradoPar,0)
 
-val secuenciasPrueba = generarSecuencia(1) // <- el numero va variando
-val secuenciaslargas = secsLargasParaPruebas(3)
-val times = List(1,10,100)
+generarPruebas.foreach(println)
 
-val n = secuenciasPrueba.length
-
-val o = crearOraculo(1)(secuenciasPrueba)
-
-//for {
-//  s <- secuenciaslargas
-//  a = for {
-//  n <- 1 to 3
-//  time <- times
-//  o = crearOraculo (time) (s)
-//} yield ("Prueba: " + n, "Delay: " + time, compararAlgoritmosPar(
-//reconstruirCadenaMejorado,
-//reconstruirCadenaMejoradoPar
-//) (umbral) (s.length, o))
-//} yield ("cadenas de longitud: 2^" + s.length,a)
-
-val reportes: Seq[String] =
-  for {
-    s <- secuenciaslargas
-    time <- times
-    n <- 1 to 3
-    o = crearOraculo(time)(s)
-    resultado = compararAlgoritmosPar(
-      reconstruirCadenaMejorado,
-      reconstruirCadenaMejoradoPar
-    )(umbral)(s.length, o)
-  } yield s"Cadenas 2^${s.length} | Prueba $n | Delay $time ms | Resultado: $resultado"
-
-reportes.foreach(println)
 
 

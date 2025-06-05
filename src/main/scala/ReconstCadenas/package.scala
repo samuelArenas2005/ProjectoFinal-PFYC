@@ -125,7 +125,7 @@ package object ReconstCadenas {
     for {
       s1 <- sc
       s2 <- sc
-       s: Seq[Char] = s1 ++ s2
+      s: Seq[Char] = s1 ++ s2
       if s.sliding(k).forall(sub => pertenecer(sub,scTrie))
     } yield s
   }

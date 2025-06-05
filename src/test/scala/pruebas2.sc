@@ -1,6 +1,10 @@
 import ArbolSufijos.*
 import Oraculo.{Oraculo, alfabeto, crearOraculo}
 import ReconstCadenas.*
+import ReconstCadenasPar.*
+import common.*
+import Benchmark.*
+
 /*
 val t: Trie = Nodo('_', false, List(
   Nodo('a', false, List(
@@ -80,13 +84,68 @@ val palabras: Seq[Seq[Char]] = Seq(
 )
 */
 
-val seq = Seq('g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c')
-val o = crearOraculo(1)(seq)
-val n = seq.length
+//val seq = Seq('a','g','c','a','a','t','t','a','a','g','c','a','a','t','t','a','a','g','c','a','a','t','t','a','a','g','c','a','a','t','t','a')
+//val seq2 = Seq('a','a','a','a','a','a','a','a','a','a','a','a','a','t','a','a')
+//val o = crearOraculo(1)(seq2)
+//val n = seq2.length
+//val umbral = 2
 
-//reconstruirCadenaTurbo(n,o)
-reconstruirCadenaTurboAcelerada(n,o)
+//reconstruirCadenaIngenuoPar2(umbral)(n,o)
+
+//reconstruirCadenaIngenuo(n,o)
+//reconstruirCadenaIngenuoPar(umbral)(n,o)
+//reconstruirCadenaIngenuoPar2(umbral)(n,o)
 //reconstruirCadenaTurboMejorada(n,o)
+//
+//compararAlgoritmosPar(reconstruirCadenaIngenuo,reconstruirCadenaIngenuoPar)(umbral)(n,o)
+
+//compararAlgoritmosPar(reconstruirCadenaMejorado,reconstruirCadenaMejoradoPar)(umbral)(n,o)
+
+//def crearCadenas(chars: List[Char], longitud: Int): List[Seq[Char]] = {
+//  if (longitud == 1) chars.map(Seq(_))
+//  else for {
+//    char <- chars
+//    subCadena <- crearCadenas(alfabeto.to(List), longitud - 1)
+//  } yield char +: subCadena
+//}
+//
+//
+//
+//val cadenas1 = task(crearCadenas(alfabeto.slice(0,1).to(List),4))
+//val cadenas2 = task(crearCadenas(alfabeto.slice(1,2).to(List),4))
+//val cadenas3 = task(crearCadenas(alfabeto.slice(2,3).to(List),4))
+//val cadenas4 = task(crearCadenas(alfabeto.slice(3,4).to(List),4))
+//
+//cadenas1.join()
+//cadenas2.join()
+//cadenas3.join()
+//cadenas4.join()
+
+
+//val cadenaencontrada = cadenas1.join() ++ cadenas2.join() ++ cadenas3.join() ++ cadenas4.join()
+//val o2 = crearOraculo(1)(Seq('a','a','c','a'))
+//
+//cadenaencontrada.find(o2)
+//
+//cadenaencontrada
+
+
+//def crearCadenas(chars: List[Char], longitud: Int): List[Seq[Char]] = {
+//  if (longitud == 1) chars.map(Seq(_))
+//  else for {
+//    char <- chars
+//    subCadena <- crearCadenas(alfabeto.to(List), longitud - 1)
+//  } yield char +: subCadena
+//}
+//
+//crearCadenas(List('a','c'),2)
+//crearCadenas(List('g','t'),2)
+//
+//alfabeto.slice(0,2)
+//alfabeto.slice(2,4)
+//
+//val task1 = task(crearCadenas(List('a','c'),2))
+
 
 /*
 def filtrar(SC:Seq[Seq[Char]],k: Int):Seq[Seq[Char]] = {
@@ -122,8 +181,8 @@ def verificarCadenas(SC:Seq[Seq[Char]],k: Int):Seq[Char] ={
 }
 verificarCadenas(Nil,1)*/
 
-val a = List(Seq('a','c'),Seq('a','t'),Seq('t','a'))
-val k = 2
+//val b = List(Seq('a','c'),Seq('a','t'),Seq('t','a'))
+//val k = 2
 
 
 

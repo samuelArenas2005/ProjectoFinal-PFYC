@@ -1,3 +1,7 @@
+import common._
+import scala.collection.parallel.CollectionConverters._
+import Oraculo._
+
 package object ArbolSufijos {
   abstract class Trie
   case class Nodo (car:Char, marcada:Boolean,hijos:List[Trie]) extends Trie
@@ -107,6 +111,5 @@ package object ArbolSufijos {
     arbolDeSufijosRec(ss,Nodo('_',false,Nil))
 
   }
-
 
 }
