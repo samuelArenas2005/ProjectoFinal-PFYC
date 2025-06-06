@@ -57,15 +57,6 @@ package object ReconstCadenasPar {
 
   def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
 
-    // Generar todas las combinaciones de longitud 2 del alfabeto,
-    // y filtrar aquellas que el oráculo acepta como válidas.
-    val cadenasIniciales: Seq[Seq[Char]] = for {
-      c1 <- alfabeto
-      c2 <- alfabeto
-      if o(Seq(c1, c2))
-    } yield Seq(c1, c2)
-
-
     def expandirCadenas(cadenas: Seq[Seq[Char]], k: Int): Seq[Char] = {
       if (k >= n) cadenas.head
       else {
@@ -73,22 +64,18 @@ package object ReconstCadenasPar {
           a <- cadenas
           b <- cadenas
         } yield (a, b)
-
         val nuevasCadenas = if (pares.size > umbral) {
           // Paralelizamos solo si el número de combinaciones excede el umbral
-          pares.par
-            .map { case (a, b) => a ++ b }
-            .filter(o)
-            .seq
+          pares.par.map { case (a, b) => a ++ b }.filter(o).seq
         } else {
-          pares
-            .map { case (a, b) => a ++ b }
-            .filter(o)
+          pares.map { case (a, b) => a ++ b }.filter(o)
         }
         expandirCadenas(nuevasCadenas, k * 2)
       }
     }
-    expandirCadenas(cadenasIniciales, 2)
+
+    val cadenasIniciales = alfabeto.par.map(c => Seq(c)).seq
+    expandirCadenas(cadenasIniciales, 1)
   }
 
 
@@ -96,7 +83,6 @@ package object ReconstCadenasPar {
   def reconstruirCadenaTurboMejoradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
 
     def filtrar(sc: Set[String], k: Int): Set[String] = {
-      val parSc = sc.par
       val parNuevas = for {
         s1 <- sc.par
         s2 <- sc.par
@@ -106,17 +92,15 @@ package object ReconstCadenasPar {
       parNuevas.seq.toSet
     }
 
-
     // Función recursiva que construye la cadena en paralelo
     def construir(sc: Set[String], k: Int): String = {
       if (k >= n) {
         sc.find(w => w.length == n && o(w.toSeq)).getOrElse("")
       } else {
-        val nextK = 2 * k
         val filtered = filtrar(sc, k)
         val candidates = filtered.par
         val valid = candidates.filter(w => o(w.toSeq))
-        valid.find(_.length == n).getOrElse(construir(valid.seq.toSet, nextK))
+        construir(valid.seq.toSet, 2 * k)
       }
     }
 

@@ -46,9 +46,9 @@ def generarPrueba(MIN:Int,MAX:Int,nPrueba: Int, algorSec:(Int,Oraculo) => Seq[Ch
 * 6. umbral del algoritmo secuencial
 * */
 
-val generarPruebas:Seq[String] = generarPrueba(6,8,3,reconstruirCadenaMejorado,reconstruirCadenaMejoradoPar,0)
+val generarPruebas:Seq[String] = generarPrueba(9,10,2,reconstruirCadenaMejorado,reconstruirCadenaMejoradoPar,0)
+
 
 generarPruebas.foreach(println)
-
 
 
