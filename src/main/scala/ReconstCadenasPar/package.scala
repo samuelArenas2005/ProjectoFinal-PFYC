@@ -132,7 +132,6 @@ package object ReconstCadenasPar {
       ).par.filter(o).seq
 
     // el metodo funciona como una recursion que verifica en bloques de potencias de 2 las cadenas candidatas
-    @tailrec
     def verificarCadenas(sc: Seq[Seq[Char]], k: Int): Seq[Char] = {
       if (k >= n) {
         if (sc.size >= umbral) sc.par.find(w => o(w)).getOrElse(Seq.empty) else sc.find(w => o(w)).getOrElse(Seq.empty)
