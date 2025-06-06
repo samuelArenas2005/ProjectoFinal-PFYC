@@ -74,7 +74,7 @@ package object ReconstCadenasPar {
       }
     }
 
-    val cadenasIniciales = alfabeto.par.map(c => Seq(c)).seq
+    val cadenasIniciales = alfabeto.map(c => Seq(c))
     expandirCadenas(cadenasIniciales, 1)
   }
 
@@ -113,47 +113,33 @@ package object ReconstCadenasPar {
   }
 
 
-  def filtrarTrie(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
-    val scTrie = arbolDeSufijos(sc)
-    (for {
-      s1 <- sc.par
-      s2 <- sc.par
-      s = s1 ++ s2
-      if s.sliding(k).forall(sub => pertenecer(sub, scTrie))
-    } yield s).seq
-  }
+
 
   def reconstruirCadenaTurboAceleradaPar(umbral:Int)(n: Int, o: Oraculo): Seq[Char] = {
-    val cadenasIniciales = (
-      for {
-        char <- alfabeto
-        subChar <- alfabeto
-      } yield Seq(char, subChar)
-      ).par.filter(o).seq
-
+    def filtrarTrie(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
+      val scTrie = arbolDeSufijos(sc)
+      (for {
+        s1 <- sc.par
+        s2 <- sc.par
+        s = s1 ++ s2
+        if s.sliding(k).forall(sub => pertenecer(sub, scTrie))
+      } yield s).seq
+    }
     // el metodo funciona como una recursion que verifica en bloques de potencias de 2 las cadenas candidatas
     def verificarCadenas(sc: Seq[Seq[Char]], k: Int): Seq[Char] = {
       if (k >= n) {
-        if (sc.size >= umbral) sc.par.find(w => o(w)).getOrElse(Seq.empty) else sc.find(w => o(w)).getOrElse(Seq.empty)
+        if (k >= umbral) sc.par.find(w => o(w)).getOrElse(Seq.empty) else sc.find(w => o(w)).getOrElse(Seq.empty)
       } else {
-        val nextK = 2 * k
-
         // Filtrar combinaciones válidas según el árbol de sufijos
         val filtered = filtrarTrie(sc, k)
-
         // Evaluar con el oráculo, usando paralelismo si hay suficientes elementos
-        val valid =
-          if (filtered.size >= umbral) filtered.par.filter(o).seq
-          else filtered.filter(o)
-
-        if (valid.length == n) valid.head else verificarCadenas(valid, nextK)
+        val valid = if (filtered.size >= umbral) filtered.par.filter(o).toList else filtered.filter(o)
+        verificarCadenas(valid, 2*k)
       }
     }
 
-    if (n > 2)
-      verificarCadenas(filtrarTrie(cadenasIniciales, 2), 4)
-    else
-      cadenasIniciales.headOption.getOrElse(Seq.empty)
+    val cadenasIniciales = alfabeto.map(c => Seq(c))
+    verificarCadenas(cadenasIniciales,1)
   }
 
 }

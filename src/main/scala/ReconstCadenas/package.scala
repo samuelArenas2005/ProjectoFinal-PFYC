@@ -42,9 +42,9 @@ package object ReconstCadenas {
       for{
         subcadena <- subcadenasActuales
         letra <- alfabeto
-        nuevaSubcadena = subcadena :+ letra
-        if o(nuevaSubcadena)
-      } yield nuevaSubcadena
+        nueva = subcadena :+ letra
+        if o(nueva)
+      } yield nueva
 
     /** Construye recursivamente el conjunto de subcadenass de longitud k validas*/
     def construirSubcadenaValida(cadenasActuales:Set[Seq[Char]], k:Int):Seq[Char] ={
@@ -58,8 +58,9 @@ package object ReconstCadenas {
     construirSubcadenaValida(Set(vacia),1)
   }
 
+
+
   def reconstruirCadenaTurbo(n: Int, o: Oraculo): Seq[Char] = {
-    
     def verificarCadenas(SC: Seq[Seq[Char]], k: Int): Seq[Char] = {
         if (k < n) {
           val cadenasCandidatas: Seq[Seq[Char]] = for {
@@ -69,12 +70,14 @@ package object ReconstCadenas {
           } yield chain ++ subChain
           verificarCadenas(cadenasCandidatas, k*2)
         } else SC.head
+        
     }
 
     val cadenasIniciales = alfabeto.map(c => Seq(c))
     verificarCadenas(cadenasIniciales, 1)
 
   }
+  
 
   def reconstruirCadenaTurboMejorada(n: Int, o: Oraculo): Seq[Char] = {
     def filtrar(sc: Set[String], k: Int): Set[String] = {

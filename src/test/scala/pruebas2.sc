@@ -56,18 +56,73 @@ import scala.util.Random
 //  Hoja('t', true)
 //))
 //
+//cabezas(tprueba).contains('a')
 
 def generarSecuencia(n: Int): Seq[Char] = {
   val longitud = math.pow(2, n).toInt
   Seq.fill(longitud)(alfabeto(Random.nextInt(alfabeto.length)))
 }
 
-val a = generarSecuencia(0)
+val a = generarSecuencia(4)
+
 val n = a.length
 val o = crearOraculo(1)(a)
 
-reconstruirCadenaIngenuo(n,o)
+
+//val a0 = reconstruirCadenaIngenuo(n,o)
+//
+//val vala01 = reconstruirCadenaIngenuoPar(2)(n,o)
+
+//val a1 = reconstruirCadenaMejorado(n,o)
+//
+//val a2 = reconstruirCadenaMejoradoPar(2)(n,o)
+//
+//val a3 = reconstruirCadenaTurbo(n,o)
+//
+//val a4 = reconstruirCadenaTurboPar(2)(n,o)
+//
+//val a5 = reconstruirCadenaTurboMejorada(n,o)
+//
+//val a6 = reconstruirCadenaTurboMejoradaPar(2)(n,o)
+//
+//val a7 = reconstruirCadenaTurboAcelerada(n,o)
+//
+//val a8 = reconstruirCadenaTurboAceleradaPar(2)(n,o)
+//
+//
+//a1 == a
+//a2 == a
+//a3 == a
+//a4 == a
+//a5 == a
+//a6 == a
+//a7 == a
+//a8 == a
+
+compararAlgoritmosPar(reconstruirCadenaMejorado,reconstruirCadenaMejoradoPar)(0)(n,o)
+
+compararAlgoritmosPar(reconstruirCadenaTurbo,reconstruirCadenaTurboPar)(2)(n,o)
+
+compararAlgoritmosPar(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboMejoradaPar)(0)(n,o)
+
+compararAlgoritmosPar(reconstruirCadenaTurboAcelerada,reconstruirCadenaTurboAceleradaPar)(2)(n,o)
 
 
+
+//compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o)
+//
+//compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o2)
+//
+//compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o3)
+//
+//compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o4)
+//
+////
+//compararAlgoritmosSec(reconstruirCadenaMejorado,reconstruirCadenaTurboMejorada)(n,o)
+//
+//compararAlgoritmosSec(reconstruirCadenaMejorado,reconstruirCadenaTurboAcelerada)(n,o)
+//
+//compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o)
+//
 
 
