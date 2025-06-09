@@ -28,14 +28,14 @@ package object Benchmark {
   def compararAlgoritmosSec(a1: algoritmoCadena, a2: algoritmoCadena)
                            (m1: Int, m2: Oraculo): (Double, Double, Double) = {
     val timeA1 = config(
-      KeyValue(Key.exec.minWarmupRuns -> 1),
-      KeyValue(Key.exec.maxWarmupRuns -> 2),
+      KeyValue(Key.exec.minWarmupRuns -> 20),
+      KeyValue(Key.exec.maxWarmupRuns -> 30),
       KeyValue(Key.verbose -> false)
     ) withWarmer (new Warmer.Default) measure (a1(m1, m2))
 
     val timeA2 = config(
-      KeyValue(Key.exec.minWarmupRuns -> 1),
-      KeyValue(Key.exec.maxWarmupRuns -> 2),
+      KeyValue(Key.exec.minWarmupRuns -> 20),
+      KeyValue(Key.exec.maxWarmupRuns -> 30),
       KeyValue(Key.verbose -> false)
     ) withWarmer (new Warmer.Default) measure (a2(m1, m2))
 

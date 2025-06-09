@@ -1,7 +1,4 @@
-import common._
-import scala.collection.parallel.CollectionConverters._
-import Oraculo._
-
+import scala.annotation.tailrec
 package object ArbolSufijos {
   abstract class Trie
   case class Nodo (car:Char, marcada:Boolean,hijos:List[Trie]) extends Trie
@@ -24,7 +21,7 @@ package object ArbolSufijos {
 
 
   def pertenecer(s: Seq[Char], t: Trie): Boolean = {
-
+    @tailrec
     def pertenecerRec(s: Seq[Char], hijos: List[Trie]): Boolean = s match {
       case Nil => true
       case x :: xs =>
@@ -42,13 +39,12 @@ package object ArbolSufijos {
           }
         }
     }
-
     t match {
       case Nodo(_, _, hijos) => pertenecerRec(s, hijos)
       case _ => false
     }
   }
-
+  
 
   def adicionar(s: Seq[Char], t: Trie): Trie = {
 
@@ -76,6 +72,7 @@ package object ArbolSufijos {
                 if (xs.isEmpty) Hoja(x, true)
                 else Nodo(x, false, adicionarRec(xs, Nil))
               before :+ nuevoNodo
+            case _ => hijos
           }
       }
     }
@@ -88,13 +85,14 @@ package object ArbolSufijos {
         Nodo('_', false, adicionarRec(s, Nil))
     }
   }
-
-
+  
   def arbolDeSufijos(ss:Seq[Seq[Char]]):Trie = {
 
+    @tailrec
     def arbolDeSufijosRec(ss:Seq[Seq[Char]], t:Trie):Trie = {
 
-      def arbolDeSufijosRec2(s:Seq[Char],t:Trie):Trie = {
+      @tailrec
+      def arbolDeSufijosRec2(s:Seq[Char], t:Trie):Trie = {
         s match{
           case Nil => t
           case _ => arbolDeSufijosRec2(s.tail,adicionar(s,t))
@@ -106,9 +104,9 @@ package object ArbolSufijos {
         case x::xs => arbolDeSufijosRec(xs,arbolDeSufijosRec2(x,t))
       }
     }
-
     arbolDeSufijosRec(ss,Nodo('_',false,Nil))
-
   }
+  
+
 
 }

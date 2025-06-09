@@ -13,6 +13,12 @@ import scala.util.Random
 //val t3 = adicionar("car".toList, t2)
 //val t4 = adicionar("cac".toList, t3)
 //val t5 = adicionar("ca".toList,t4)
+//val t40 = adicionar("m".toList,t5)
+//
+//val t6 = adicionar2("cat".toList, t1)
+//val t7 = adicionar2("car".toList, t6)
+//val t8 = adicionar2("cac".toList, t7)
+//val t9 = adicionar2("ca".toList,t8)
 //
 //println(pertenecer("cat".toList, t4))
 //println(pertenecer("car".toList, t4))
@@ -33,8 +39,13 @@ import scala.util.Random
 //
 //val prueba1 = Seq('a','c','a','c')
 //val prueba2 = Seq('c','a','c','t')
+//val prueba = Seq('t','a')
 //
-//arbolDeSufijos(Seq(prueba1,prueba2))
+//
+//val arbol = arbolDeSufijos(Seq(prueba1,prueba2,prueba))
+//
+//pertenecer(Seq('t','a'),arbol)
+//
 //
 //val tprueba: Trie = Nodo(' ', false, List(
 //  Nodo('a', false, List(
@@ -55,7 +66,7 @@ import scala.util.Random
 //  )),
 //  Hoja('t', true)
 //))
-//
+
 //cabezas(tprueba).contains('a')
 
 def generarSecuencia(n: Int): Seq[Char] = {
@@ -63,15 +74,16 @@ def generarSecuencia(n: Int): Seq[Char] = {
   Seq.fill(longitud)(alfabeto(Random.nextInt(alfabeto.length)))
 }
 
-val a = generarSecuencia(4)
+val a = generarSecuencia(6)
 
 val n = a.length
 val o = crearOraculo(1)(a)
 
 
+//
 //val a0 = reconstruirCadenaIngenuo(n,o)
 //
-//val vala01 = reconstruirCadenaIngenuoPar(2)(n,o)
+//val a01 = reconstruirCadenaIngenuoPar(2)(n,o)
 
 //val a1 = reconstruirCadenaMejorado(n,o)
 //
@@ -80,7 +92,7 @@ val o = crearOraculo(1)(a)
 //val a3 = reconstruirCadenaTurbo(n,o)
 //
 //val a4 = reconstruirCadenaTurboPar(2)(n,o)
-//
+
 //val a5 = reconstruirCadenaTurboMejorada(n,o)
 //
 //val a6 = reconstruirCadenaTurboMejoradaPar(2)(n,o)
@@ -88,8 +100,11 @@ val o = crearOraculo(1)(a)
 //val a7 = reconstruirCadenaTurboAcelerada(n,o)
 //
 //val a8 = reconstruirCadenaTurboAceleradaPar(2)(n,o)
-//
-//
+
+//a0 == a
+//a01 == a
+
+
 //a1 == a
 //a2 == a
 //a3 == a
@@ -99,23 +114,25 @@ val o = crearOraculo(1)(a)
 //a7 == a
 //a8 == a
 
-compararAlgoritmosPar(reconstruirCadenaMejorado,reconstruirCadenaMejoradoPar)(0)(n,o)
-
-compararAlgoritmosPar(reconstruirCadenaTurbo,reconstruirCadenaTurboPar)(2)(n,o)
-
-compararAlgoritmosPar(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboMejoradaPar)(0)(n,o)
-
-compararAlgoritmosPar(reconstruirCadenaTurboAcelerada,reconstruirCadenaTurboAceleradaPar)(2)(n,o)
-
-
-
+//compararAlgoritmosPar(reconstruirCadenaIngenuo,reconstruirCadenaIngenuoPar)(0)(n,o)
+//
+//compararAlgoritmosPar(reconstruirCadenaMejorado,reconstruirCadenaMejoradoPar)(0)(n,o)
+//
+//compararAlgoritmosPar(reconstruirCadenaTurbo,reconstruirCadenaTurboPar)(2)(n,o)
+//
+//compararAlgoritmosPar(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboMejoradaPar)(0)(n,o)
+//
+//compararAlgoritmosPar(reconstruirCadenaTurboAcelerada,reconstruirCadenaTurboAceleradaPar)(2)(n,o)
+//
+////
+//
 //compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o)
 //
-//compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o2)
+//compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o)
 //
-//compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o3)
+//compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o)
 //
-//compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o4)
+//compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o)
 //
 ////
 //compararAlgoritmosSec(reconstruirCadenaMejorado,reconstruirCadenaTurboMejorada)(n,o)
@@ -123,6 +140,7 @@ compararAlgoritmosPar(reconstruirCadenaTurboAcelerada,reconstruirCadenaTurboAcel
 //compararAlgoritmosSec(reconstruirCadenaMejorado,reconstruirCadenaTurboAcelerada)(n,o)
 //
 //compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o)
-//
+
+
 
 

@@ -33,7 +33,7 @@ package object ReconstCadenas {
   }
 
 
-  def reconstruirCadenaMejorado(n: Int, o: Oraculo): Seq[Char] = {
+  def reconstruirCadenaMejorado2(n: Int, o: Oraculo): Seq[Char] = {
     val vacia: Seq[Char] = Seq()
 
     /** genera el conjunto de nuevas subcanedas de longitud k, enxtendiendo cada subcadena valida actual con cada caracter del alfabeto.
@@ -47,20 +47,37 @@ package object ReconstCadenas {
       } yield nueva
 
     /** Construye recursivamente el conjunto de subcadenass de longitud k validas*/
-    def construirSubcadenaValida(cadenasActuales:Set[Seq[Char]], k:Int):Seq[Char] ={
+    def construirSubcadenaValida(cadenasActuales:Set[Seq[Char]]):Seq[Char] ={
         val siguientesSubcadenas = generarSubcadenasValidas(cadenasActuales)
-        siguientesSubcadenas.find(_.length == n) match{
-          case Some(sol) => sol
-          case None => construirSubcadenaValida(siguientesSubcadenas , k+1)
-        }
+        siguientesSubcadenas.find(_.length == n).getOrElse(construirSubcadenaValida(siguientesSubcadenas))
     }
     /** se  inicia la construccion desde la cadena vacia, con subcadenas de longitud 0 */
-    construirSubcadenaValida(Set(vacia),1)
+    construirSubcadenaValida(Set(vacia))
+  }
+
+  def reconstruirCadenaMejorado(n: Int, o: Oraculo): Seq[Char] = {
+    val vacia: Seq[Char] = Seq()
+
+    def generarSubcadenasValidas(subcadenasActuales: Set[Seq[Char]]): Set[Seq[Char]] =
+      for {
+        subcadena <- subcadenasActuales
+        letra <- alfabeto
+        nueva = subcadena :+ letra
+        if o(nueva)
+      } yield nueva
+
+    def construirSubcadenaValida(cadenasActuales: Set[Seq[Char]]): Seq[Char] = {
+      val siguientesSubcadenas = generarSubcadenasValidas(cadenasActuales)
+      siguientesSubcadenas.find(_.length == n).getOrElse(construirSubcadenaValida(siguientesSubcadenas))
+    }
+
+    construirSubcadenaValida(Set(vacia))
   }
 
 
 
   def reconstruirCadenaTurbo(n: Int, o: Oraculo): Seq[Char] = {
+    @tailrec
     def verificarCadenas(SC: Seq[Seq[Char]], k: Int): Seq[Char] = {
         if (k < n) {
           val cadenasCandidatas: Seq[Seq[Char]] = for {
@@ -89,6 +106,7 @@ package object ReconstCadenas {
       } yield s
     }
 
+    @tailrec
     def construir(sc: Set[String], k: Int): String = {
       if (k >= n) {
         sc.find(w => w.length == n && o(w.toSeq)).getOrElse("")
@@ -100,10 +118,7 @@ package object ReconstCadenas {
       }
     }
 
-    val sc1 = alfabeto.flatMap(a => {
-      val s = a.toString
-      if (o(s.toSeq)) Some(s) else None
-    }).toSet
+    val sc1 = alfabeto.map(_.toString).toSet
 
     construir(sc1, 1).toList
   }

@@ -1,7 +1,10 @@
-import common._
-import scala.collection.parallel.CollectionConverters._
-import Oraculo._
-import ArbolSufijos._
+import common.*
+
+import scala.collection.parallel.CollectionConverters.*
+import Oraculo.*
+import ArbolSufijos.*
+
+import scala.annotation.tailrec
 
 
 package object ReconstCadenasPar {
@@ -40,20 +43,15 @@ package object ReconstCadenasPar {
       } yield nueva
       parNuevas.seq.toSet
     }
-
-
-    def construirSubcadena(cadenasActuales: Set[Seq[Char]], k: Int): Seq[Char] = {
-      val siguientes: Set[Seq[Char]] = generarSubcadenasValidasPar(cadenasActuales)
-      siguientes.find(_.length == n) match {
-        case Some(sol) => sol
-        case None =>
-          construirSubcadena(siguientes, k + 1)
-      }
+    
+    def construirSubcadenaValida(cadenasActuales: Set[Seq[Char]]): Seq[Char] = {
+      val siguientesSubcadenas = generarSubcadenasValidasPar(cadenasActuales)
+      siguientesSubcadenas.find(_.length == n).getOrElse(construirSubcadenaValida(siguientesSubcadenas))
     }
-
-    construirSubcadena(Set(vacia), 1)
+    
+    construirSubcadenaValida(Set(vacia))
   }
-
+  
 
   def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
 
@@ -93,6 +91,7 @@ package object ReconstCadenasPar {
     }
 
     // Función recursiva que construye la cadena en paralelo
+    @tailrec
     def construir(sc: Set[String], k: Int): String = {
       if (k >= n) {
         sc.find(w => w.length == n && o(w.toSeq)).getOrElse("")
@@ -104,17 +103,12 @@ package object ReconstCadenasPar {
       }
     }
 
-    val sc1 = alfabeto.flatMap(a => {
-      val s = a.toString
-      if (o(s.toSeq)) Some(s) else None
-    }).toSet
+    val sc1 = alfabeto.map(_.toString).toSet
 
     construir(sc1, 1).toList
   }
 
-
-
-
+  
   def reconstruirCadenaTurboAceleradaPar(umbral:Int)(n: Int, o: Oraculo): Seq[Char] = {
     def filtrarTrie(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
       val scTrie = arbolDeSufijos(sc)
@@ -126,6 +120,7 @@ package object ReconstCadenasPar {
       } yield s).seq
     }
     // el metodo funciona como una recursion que verifica en bloques de potencias de 2 las cadenas candidatas
+    @tailrec
     def verificarCadenas(sc: Seq[Seq[Char]], k: Int): Seq[Char] = {
       if (k >= n) {
         if (k >= umbral) sc.par.find(w => o(w)).getOrElse(Seq.empty) else sc.find(w => o(w)).getOrElse(Seq.empty)
