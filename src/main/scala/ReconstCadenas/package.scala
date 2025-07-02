@@ -33,7 +33,9 @@ package object ReconstCadenas {
   }
 
 
-  def reconstruirCadenaMejorado2(n: Int, o: Oraculo): Seq[Char] = {
+
+
+  def reconstruirCadenaMejorado(n: Int, o: Oraculo): Seq[Char] = {
     val vacia: Seq[Char] = Seq()
 
     /** genera el conjunto de nuevas subcanedas de longitud k, enxtendiendo cada subcadena valida actual con cada caracter del alfabeto.
@@ -49,31 +51,12 @@ package object ReconstCadenas {
     /** Construye recursivamente el conjunto de subcadenass de longitud k validas*/
     def construirSubcadenaValida(cadenasActuales:Set[Seq[Char]]):Seq[Char] ={
         val siguientesSubcadenas = generarSubcadenasValidas(cadenasActuales)
-        siguientesSubcadenas.find(_.length == n).getOrElse(construirSubcadenaValida(siguientesSubcadenas))
+        if (siguientesSubcadenas.head.length == n) siguientesSubcadenas.head
+        else construirSubcadenaValida(siguientesSubcadenas)
     }
     /** se  inicia la construccion desde la cadena vacia, con subcadenas de longitud 0 */
     construirSubcadenaValida(Set(vacia))
   }
-
-  def reconstruirCadenaMejorado(n: Int, o: Oraculo): Seq[Char] = {
-    val vacia: Seq[Char] = Seq()
-
-    def generarSubcadenasValidas(subcadenasActuales: Set[Seq[Char]]): Set[Seq[Char]] =
-      for {
-        subcadena <- subcadenasActuales
-        letra <- alfabeto
-        nueva = subcadena :+ letra
-        if o(nueva)
-      } yield nueva
-
-    def construirSubcadenaValida(cadenasActuales: Set[Seq[Char]]): Seq[Char] = {
-      val siguientesSubcadenas = generarSubcadenasValidas(cadenasActuales)
-      siguientesSubcadenas.find(_.length == n).getOrElse(construirSubcadenaValida(siguientesSubcadenas))
-    }
-
-    construirSubcadenaValida(Set(vacia))
-  }
-
 
 
   def reconstruirCadenaTurbo(n: Int, o: Oraculo): Seq[Char] = {
@@ -109,7 +92,7 @@ package object ReconstCadenas {
     @tailrec
     def construir(sc: Set[String], k: Int): String = {
       if (k >= n) {
-        sc.find(w => w.length == n && o(w.toSeq)).getOrElse("")
+        sc.find(w => o(w.toSeq)).getOrElse("")
       } else {
         val filtered = filtrar(sc, k)
         val candidates = filtered

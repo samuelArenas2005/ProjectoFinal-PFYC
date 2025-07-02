@@ -46,36 +46,74 @@ package object ReconstCadenasPar {
     
     def construirSubcadenaValida(cadenasActuales: Set[Seq[Char]]): Seq[Char] = {
       val siguientesSubcadenas = generarSubcadenasValidasPar(cadenasActuales)
-      siguientesSubcadenas.find(_.length == n).getOrElse(construirSubcadenaValida(siguientesSubcadenas))
+      if (siguientesSubcadenas.head.length == n) siguientesSubcadenas.head
+      else construirSubcadenaValida(siguientesSubcadenas)
     }
     
     construirSubcadenaValida(Set(vacia))
   }
   
 
+//  def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
+//
+//    def expandirCadenas(cadenas: Seq[Seq[Char]], k: Int): Seq[Char] = {
+//      if (k >= n) cadenas.head
+//      else {
+//        val pares = for {
+//          a <- cadenas
+//          b <- cadenas
+//        } yield (a, b)
+//        val nuevasCadenas = if (pares.size > umbral) {
+//          // Paralelizamos solo si el número de combinaciones excede el umbral
+//          pares.par.map { case (a, b) => a ++ b }.filter(o).seq
+//        } else {
+//          pares.map { case (a, b) => a ++ b }.filter(o)
+//        }
+//        expandirCadenas(nuevasCadenas, k * 2)
+//      }
+//    }
+//
+//    val cadenasIniciales = alfabeto.map(c => Seq(c))
+//    expandirCadenas(cadenasIniciales, 1)
+//  }
+
+
   def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
 
+    // 1. Generar las combinaciones de todas las parejas (a, b)
+    def generarCombinaciones(cadenas: Seq[Seq[Char]]): Seq[(Seq[Char], Seq[Char])] = {
+      for {
+        a <- cadenas
+        b <- cadenas
+      } yield (a, b)
+    }
+
+    // 2. Combinar y filtrar usando el oráculo, con paralelismo si se supera el umbral
+    def combinarYFiltrar(pares: Seq[(Seq[Char], Seq[Char])], usarParalelo: Boolean): Seq[Seq[Char]] = {
+      if (usarParalelo) {
+        pares.par.map { case (a, b) => a ++ b }.filter(o).seq
+      } else {
+        pares.map { case (a, b) => a ++ b }.filter(o)
+      }
+    }
+
+    // 3. Expansión recursiva de cadenas hasta alcanzar longitud n
     def expandirCadenas(cadenas: Seq[Seq[Char]], k: Int): Seq[Char] = {
       if (k >= n) cadenas.head
       else {
-        val pares = for {
-          a <- cadenas
-          b <- cadenas
-        } yield (a, b)
-        val nuevasCadenas = if (pares.size > umbral) {
-          // Paralelizamos solo si el número de combinaciones excede el umbral
-          pares.par.map { case (a, b) => a ++ b }.filter(o).seq
-        } else {
-          pares.map { case (a, b) => a ++ b }.filter(o)
-        }
+        val pares = generarCombinaciones(cadenas)
+        val usarParalelo = pares.size > umbral
+        val nuevasCadenas = combinarYFiltrar(pares, usarParalelo)
         expandirCadenas(nuevasCadenas, k * 2)
       }
     }
 
-    val cadenasIniciales = alfabeto.map(c => Seq(c))
+    // 4. Inicialización de cadenas a partir del alfabeto
+    val cadenasIniciales: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
+
+    // 5. Llamada principal
     expandirCadenas(cadenasIniciales, 1)
   }
-
 
 
   def reconstruirCadenaTurboMejoradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
@@ -94,7 +132,7 @@ package object ReconstCadenasPar {
     @tailrec
     def construir(sc: Set[String], k: Int): String = {
       if (k >= n) {
-        sc.find(w => w.length == n && o(w.toSeq)).getOrElse("")
+        sc.find(w => o(w.toSeq)).getOrElse("")
       } else {
         val filtered = filtrar(sc, k)
         val candidates = filtered.par

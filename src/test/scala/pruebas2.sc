@@ -74,10 +74,10 @@ def generarSecuencia(n: Int): Seq[Char] = {
   Seq.fill(longitud)(alfabeto(Random.nextInt(alfabeto.length)))
 }
 
-val a = generarSecuencia(6)
+val a = generarSecuencia(10)
 
 val n = a.length
-val o = crearOraculo(1)(a)
+val o = crearOraculo(0)(a)
 
 
 //
@@ -85,10 +85,7 @@ val o = crearOraculo(1)(a)
 //
 //val a01 = reconstruirCadenaIngenuoPar(2)(n,o)
 
-//val a1 = reconstruirCadenaMejorado(n,o)
-//
-//val a2 = reconstruirCadenaMejoradoPar(2)(n,o)
-//
+/
 //val a3 = reconstruirCadenaTurbo(n,o)
 //
 //val a4 = reconstruirCadenaTurboPar(2)(n,o)
@@ -107,7 +104,7 @@ val o = crearOraculo(1)(a)
 
 //a1 == a
 //a2 == a
-//a3 == a
+////a3 == a
 //a4 == a
 //a5 == a
 //a6 == a
@@ -140,6 +137,7 @@ val o = crearOraculo(1)(a)
 //compararAlgoritmosSec(reconstruirCadenaMejorado,reconstruirCadenaTurboAcelerada)(n,o)
 //
 //compararAlgoritmosSec(reconstruirCadenaTurboMejorada,reconstruirCadenaTurboAcelerada)(n,o)
+
 
 
 
