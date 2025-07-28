@@ -20,7 +20,7 @@ package object ArbolSufijos {
   }
 
 
-  def pertenecer(s: Seq[Char], t: Trie): Boolean = {
+  def pertenece(s: Seq[Char], t: Trie): Boolean = {
     @tailrec
     def pertenecerRec(s: Seq[Char], hijos: List[Trie]): Boolean = s match {
       case Nil => true

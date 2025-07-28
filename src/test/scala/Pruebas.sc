@@ -1,3 +1,4 @@
+import Benchmark.compararAlgoritmosPar
 import Oraculo.*
 import ReconstCadenas.*
 import ReconstCadenasPar.*
@@ -5,8 +6,291 @@ import common.parallel
 import org.scalameter.*
 
 import scala.util.Random
-
 val random = new Random()
+
+
+/******************************************************************
+ * *
+ * SECCIÓN DE COMPARACIÓN DE ALGORITMOS: PARALELO VS. SEC      *
+ * *
+ ******************************************************************/
+
+
+def generarSecuencia(n: Int): Seq[Char] = {
+  val longitud = math.pow(2, n).toInt
+  Seq.fill(longitud)(alfabeto(Random.nextInt(alfabeto.length)))
+}
+
+def generarSecuenciaCortas(n:Int) : Seq[Char] = {
+  Seq.fill(n)(alfabeto(Random.nextInt(alfabeto.length)))
+}
+
+
+def generarPrueba(MIN:Int,MAX:Int,nPrueba: Int, algorSec:(Int,Oraculo) => Seq[Char],
+                  algorPar:Int=>(Int,Oraculo) => Seq[Char], umbral:Int ) : Seq[String] = {
+  val reportes = for {
+      l <- MIN to MAX
+      n <- 1 to nPrueba
+      secuencia = generarSecuencia(l)
+      o = crearOraculo(1)(secuencia)
+      resultado = compararAlgoritmosPar(
+        algorSec,
+        algorPar
+      )(umbral)(secuencia.length, o)
+    } yield s"Cadenas ${secuencia.length} | Prueba $n | Resultado: $resultado"
+
+    reportes
+}
+
+/*
+* Generar Prueba recibe 6 parametros:
+* 1. longitud minima de los caracteres que se van a probar
+* 2. longitud Maxima de los caracteres que se van a probar
+* 3. numero de pruebas maximas que se van a hacer, de 1 hasta el valor ingresado
+* 4. algoritmo secuencial a comparar
+* 5. algoritmo paralelo a comparar
+* 6. umbral del algoritmo secuencial
+* */
+
+
+def generarPruebaIngenuo(sec: List[Int],nPrueba: Int, algorSec:(Int,Oraculo) => Seq[Char],
+                         algorPar:Int=>(Int,Oraculo) => Seq[Char], umbral:Int ) : Seq[String] = {
+  val reportes = for {
+    longN <- sec
+    n <- 1 to nPrueba
+    secuencia = generarSecuenciaCortas(longN)
+    o = crearOraculo(1)(secuencia)
+    resultado = compararAlgoritmosPar(
+      algorSec,
+      algorPar
+    )(umbral)(secuencia.length, o)
+  } yield s"Cadena ${secuencia} | Prueba $n | Resultado: $resultado"
+
+  reportes
+}
+
+
+/*******************************************
+ * *
+ * SECCIÓN DE PRUEBA DE ALGORITMOS      *
+ * *
+ *******************************************/
+
+
+def generarCasoPruebaSec(MIN:Int,MAX:Int, algorSec:(Int,Oraculo) => Seq[Char]) : Seq[String] = {
+  val reportes = for {
+    l <- MIN to MAX
+    secuencia = generarSecuencia(l)
+    o = crearOraculo(0)(secuencia)
+    cadenaGenerada = algorSec(secuencia.length,o)
+    resultado = cadenaGenerada == secuencia
+    tiempo = measure(algorSec(secuencia.length,o))
+  } yield s"Cadenas ${secuencia.length} | Resultado: $resultado | Tiempo: $tiempo"
+
+  reportes
+}
+
+
+def generarCasoPruebaSecCortas(long: List[Int], algorSec:(Int,Oraculo) => Seq[Char]) : Seq[String] = {
+  val reportes = for {
+    l <- long
+    secuencia = generarSecuenciaCortas(l)
+    o = crearOraculo(0)(secuencia)
+    cadenaGenerada = algorSec(secuencia.length,o)
+    resultado = cadenaGenerada == secuencia
+    tiempo = measure(algorSec(secuencia.length,o))
+  } yield s"Cadena: ${secuencia} | Resultado: $cadenaGenerada | Tiempo: $tiempo | Estado: $resultado"
+
+  reportes
+}
+
+def generarCasoPruebaPar(MIN:Int,MAX:Int, algorPar:Int => (Int,Oraculo) => Seq[Char],umbral : Int) : Seq[String] = {
+  val reportes = for {
+    l <- MIN to MAX
+    secuencia = generarSecuencia(l)
+    o = crearOraculo(0)(secuencia)
+    cadenaGenerada = algorPar(umbral)(secuencia.length,o)
+    resultado = cadenaGenerada == secuencia
+    tiempo = measure(algorPar(umbral)(secuencia.length,o))
+  } yield s"Cadenas ${secuencia.length} | Resultado: $resultado | Tiempo: $tiempo"
+
+  reportes
+}
+
+def generarCasoPruebaParCorta(long: List[Int], algorPar:Int => (Int,Oraculo) => Seq[Char],umbral : Int) : Seq[String] = {
+  val reportes = for {
+    l <- long
+    secuencia = generarSecuenciaCortas(l)
+    o = crearOraculo(0)(secuencia)
+    cadenaGenerada = algorPar(umbral)(secuencia.length,o)
+    resultado = cadenaGenerada == secuencia
+    tiempo = measure(algorPar(umbral)(secuencia.length,o))
+  } yield s"Cadena: ${secuencia} | Resultado: $cadenaGenerada | Tiempo: $tiempo | Estado: $resultado"
+
+  reportes
+}
+
+/***********************************************************
+ * *
+ * DEFINICIÓN DE CONSTANTES PARA LAS PRUEBAS            *
+ * *
+ ***********************************************************/
+
+//// Rango de longitudes para las pruebas de cadenas largas
+//val MIN_LONG = 6
+//val MAX_LONG = 9
+//
+//// Lista de longitudes para las pruebas de cadenas cortas
+//val longitudesCortas = (1 to 5).toList
+//val umbralParalelo = 0
+//
+//println("Iniciando conjunto de pruebas...")
+//
+///***********************************************************
+// * *
+// * PRUEBAS PARA reconstruirCadenaIngenuo                 *
+// * *
+// ***********************************************************/
+//println("\n--- Pruebas para Algoritmo Ingenuo (cadenas cortas) ---")
+//val pruebaIngenuoSec = generarCasoPruebaSecCortas(longitudesCortas, reconstruirCadenaIngenuo)
+//pruebaIngenuoSec.foreach(println)
+//
+//println("\n--- Pruebas para Algoritmo Ingenuo Paralelo (cadenas cortas) ---")
+//val pruebaIngenuoPar = generarCasoPruebaParCorta(longitudesCortas, reconstruirCadenaIngenuoPar, umbralParalelo)
+//pruebaIngenuoPar.foreach(println)
+//
+//
+///***********************************************************
+// * *
+// * PRUEBAS PARA reconstruirCadenaMejorado                *
+// * *
+// ***********************************************************/
+//println("\n--- Pruebas para Algoritmo Mejorado ---")
+//val pruebaMejoradoSec = generarCasoPruebaSec(MIN_LONG, MAX_LONG, reconstruirCadenaMejorado)
+//pruebaMejoradoSec.foreach(println)
+//
+//println("\n--- Pruebas para Algoritmo Mejorado Paralelo ---")
+//val pruebaMejoradoPar = generarCasoPruebaPar(MIN_LONG, MAX_LONG, reconstruirCadenaMejoradoPar, umbralParalelo)
+//pruebaMejoradoPar.foreach(println)
+//
+//
+///***********************************************************
+// * *
+// * PRUEBAS PARA reconstruirCadenaTurbo                   *
+// * *
+// ***********************************************************/
+//println("\n--- Pruebas para Algoritmo Turbo ---")
+//val pruebaTurboSec = generarCasoPruebaSec(MIN_LONG, MAX_LONG, reconstruirCadenaTurbo)
+//pruebaTurboSec.foreach(println)
+//
+//println("\n--- Pruebas para Algoritmo Turbo Paralelo ---")
+//val pruebaTurboPar = generarCasoPruebaPar(MIN_LONG, MAX_LONG, reconstruirCadenaTurboPar, umbralParalelo)
+//pruebaTurboPar.foreach(println)
+//
+//
+///***********************************************************
+// * *
+// * PRUEBAS PARA reconstruirCadenaTurboMejorada           *
+// * *
+// ***********************************************************/
+//println("\n--- Pruebas para Algoritmo Turbo Mejorada ---")
+//val pruebaTurboMejoradaSec = generarCasoPruebaSec(MIN_LONG, MAX_LONG, reconstruirCadenaTurboMejorada)
+//pruebaTurboMejoradaSec.foreach(println)
+//
+//println("\n--- Pruebas para Algoritmo Turbo Mejorada Paralelo ---")
+//val pruebaTurboMejoradaPar = generarCasoPruebaPar(MIN_LONG, MAX_LONG, reconstruirCadenaTurboMejoradaPar, umbralParalelo)
+//pruebaTurboMejoradaPar.foreach(println)
+//
+//
+///***********************************************************
+// * *
+// * PRUEBAS PARA reconstruirCadenaTurboAcelerada         *
+// * *
+// ***********************************************************/
+//println("\n--- Pruebas para Algoritmo Turbo Acelerada ---")
+//val pruebaTurboAceleradaSec = generarCasoPruebaSec(MIN_LONG, MAX_LONG, reconstruirCadenaTurboAcelerada)
+//pruebaTurboAceleradaSec.foreach(println)
+//
+//println("\n--- Pruebas para Algoritmo Turbo Acelerada Paralelo ---")
+//val pruebaTurboAceleradaPar = generarCasoPruebaPar(MIN_LONG, MAX_LONG, reconstruirCadenaTurboAceleradaPar, umbralParalelo)
+//pruebaTurboAceleradaPar.foreach(println)
+
+
+
+
+/*****************************************************
+ * *
+ * SECCIÓN DE PRUEBAS DE ÁRBOL DE SUFIJOS         *
+ * *
+ *****************************************************/
+
+
+
+//val t1 = Nodo('_', false, Nil)
+//val t2 = adicionar("cat".toList, t1)
+//val t3 = adicionar("car".toList, t2)
+//val t4 = adicionar("cac".toList, t3)
+//val t5 = adicionar("ca".toList,t4)
+//val t40 = adicionar("m".toList,t5)
+//
+//
+//println(pertenece("cat".toList, t4))
+//println(pertenece("car".toList, t4))
+//println(pertenece("cac".toList, t4))
+//println(pertenece("ca".toList, t4))
+//
+//println(pertenece("ca".toList, t5))
+//
+//
+//val m =
+//  Nodo('_',false,List(
+//    Nodo('c',false,List(
+//      Nodo('a',false,List(
+//        Hoja('t',true), Hoja('r',true), Hoja('c',true))
+//      ))
+//    ))
+//  )
+//
+//val prueba1 = Seq('a','c','a','c')
+//val prueba2 = Seq('c','a','c','t')
+//val prueba = Seq('t','a')
+//
+//
+//val arbol = arbolDeSufijos(Seq(prueba1,prueba2,prueba))
+//
+//pertenecer(Seq('t','a'),arbol)
+//
+//
+//val tprueba: Trie = Nodo(' ', false, List(
+//  Nodo('a', false, List(
+//    Nodo('c', true, List(
+//      Nodo('a', false, List(
+//        Hoja('c', true)
+//      )),
+//      Hoja('t', true)
+//    ))
+//  )),
+//  Nodo('c', true, List(
+//    Nodo('a', false, List(
+//      Nodo('c', true, List(
+//        Hoja('t', true)
+//      ))
+//    )),
+//    Hoja('t', true)
+//  )),
+//  Hoja('t', true)
+//))
+
+
+
+
+
+
+/*
+ * =======================================================
+ * SECCIÓN DE PRUEBA PROPORCIONADA POR EL PROFESOR
+ * =======================================================
+ */
 
 type AlgoritCadena = (Int, Oraculo) => Seq[Char]
 
@@ -20,11 +304,11 @@ def secAlAzar(long:Int, s:Seq[Char]): Seq[Char] = {
   }
 }
 
-val costoOraculo = 1
+val costoOraculo = 0
 
-val sec1=Seq('a', 'c')
-val sec2 = Seq('a', 'a', 'a', 'a', 'a','a', 'a', 'a','a', 'a', 'a')
-val sec3=secAlAzar(7,Seq())
+val sec1=Seq('a', 'c', 'c', 'a')
+val sec2 = Seq('a', 'c', 'g', 'c', 'a')
+val sec3=secAlAzar(10,Seq())
 
 val or_1=crearOraculo(costoOraculo)(sec1)
 val or_2=crearOraculo(costoOraculo)(sec2)

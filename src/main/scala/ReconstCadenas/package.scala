@@ -3,56 +3,17 @@ import Oraculo.*
 
 import scala.annotation.tailrec
 
-
 package object ReconstCadenas {
-
-
-  // Este método consiste de manera sencilla generar todas las posibles combinaciones de secuencia de caracteres
-  //con un tamaño n, para luego a partir de ellas encontrar la deseada por el oraculo
-  //Se utilizaron estructura de datos perezosas para que no se calcule todas las cadenas, si no todas las cadenas hasta
-  // encontrar la cadena objetivo
-
+  
   def reconstruirCadenaIngenuo(n: Int, o: Oraculo): Seq[Char] = {
-
-    // Se llama de manera recursiva de cola cada combinación posible de caracteres
     def crearCadenas(chars: LazyList[Char], longitud: Int): LazyList[Seq[Char]] = {
-      if (longitud == 1) chars.map(Seq(_)) // Caso base que genera las Seq con un solo caracter del alfabeto
+      if (longitud == 1) chars.map(Seq(_)) 
       else for {
         char <- chars
-        subCadena <- crearCadenas(chars,longitud - 1)  // <-- LLamado recursivo que crea todas las subCadenas de longitudes menor
-        //Para ser posteriormente 'Concatenados' con cada caracter del alfabeto.
-      }yield char +: subCadena // se añade a la lista los caracteres de los otros llamados recursivos.
+        subCadena <- crearCadenas(chars,longitud - 1) 
+      }yield char +: subCadena 
     }
-
-    // se llama a crear cadena a partir del alfabeto y un tamaño n, para luego
-    // llamar al método find que se encargará de encontrar el elemento que cumpla con la condición
-    //Una vez encontrado retorna un elemento de tipo Option, por lo que es necesario utilizar getOrElse
-    //Para retonar el valor solicitado Seq[Char]
     crearCadenas(alfabeto.to(LazyList), n).find(o).getOrElse(Seq())
-
-  }
-
-
-  def reconstruirCadenaMejorado2(n: Int, o: Oraculo): Seq[Char] = {
-    val vacia: Seq[Char] = Seq()
-
-    /** genera el conjunto de nuevas subcanedas de longitud k, enxtendiendo cada subcadena valida actual con cada caracter del alfabeto.
-     * nota: solo se conservan las subcadenas que el oraculo acepte. */
-    def generarSubcadenasValidas(subcadenasActuales: Set[Seq[Char]]): Set[Seq[Char]] =
-      for{
-        subcadena <- subcadenasActuales
-        letra <- alfabeto
-        nueva = subcadena :+ letra
-        if o(nueva)
-      } yield nueva
-
-    /** Construye recursivamente el conjunto de subcadenass de longitud k validas*/
-    def construirSubcadenaValida(cadenasActuales:Set[Seq[Char]]):Seq[Char] ={
-        val siguientesSubcadenas = generarSubcadenasValidas(cadenasActuales)
-        siguientesSubcadenas.find(_.length == n).getOrElse(construirSubcadenaValida(siguientesSubcadenas))
-    }
-    /** se  inicia la construccion desde la cadena vacia, con subcadenas de longitud 0 */
-    construirSubcadenaValida(Set(vacia))
   }
 
   def reconstruirCadenaMejorado(n: Int, o: Oraculo): Seq[Char] = {
@@ -66,17 +27,19 @@ package object ReconstCadenas {
         if o(nueva)
       } yield nueva
 
+    @tailrec
     def construirSubcadenaValida(cadenasActuales: Set[Seq[Char]]): Seq[Char] = {
       val siguientesSubcadenas = generarSubcadenasValidas(cadenasActuales)
-      siguientesSubcadenas.find(_.length == n).getOrElse(construirSubcadenaValida(siguientesSubcadenas))
+      if (siguientesSubcadenas.head.length == n) siguientesSubcadenas.head
+      else construirSubcadenaValida(siguientesSubcadenas)
     }
 
     construirSubcadenaValida(Set(vacia))
   }
 
-
-
+  
   def reconstruirCadenaTurbo(n: Int, o: Oraculo): Seq[Char] = {
+    
     @tailrec
     def verificarCadenas(SC: Seq[Seq[Char]], k: Int): Seq[Char] = {
         if (k < n) {
@@ -134,11 +97,10 @@ package object ReconstCadenas {
         s1 <- sc
         s2 <- sc
         s: Seq[Char] = s1 ++ s2
-        if s.sliding(k).forall(sub => pertenecer(sub, scTrie))
+        if s.sliding(k).forall(sub => pertenece(sub, scTrie))
       } yield s
     }
-
-    // el metodo funciona como una recursion que verifica en bloques de potencias de 2 las cadenas candidatas
+    
     @tailrec
     def verificarCadenas(sc: Seq[Seq[Char]], k: Int): Seq[Char] = {
       if (k >= n) {
