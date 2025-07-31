@@ -21,27 +21,19 @@ package object ArbolSufijos {
 
 
   def pertenece(s: Seq[Char], t: Trie): Boolean = {
-    @tailrec
-    def pertenecerRec(s: Seq[Char], hijos: List[Trie]): Boolean = s match {
-      case Nil => true
-      case x :: xs =>
-        val roots = cabezas(Nodo('_', false, hijos))
-        if (!roots.contains(x)) false
-        else {
-          val i = roots.indexOf(x)
-          hijos(i) match {
-            case Nodo(c, m, h) =>
-              if (xs.isEmpty) m
-              else pertenecerRec(xs, h)
-            case Hoja(c, m) =>
-              if (xs.isEmpty) m
-              else false
+    s match{
+      case Nil => t match {
+        case Nodo(_,m,_) => m
+        case Hoja(_,m) => m
+      }
+      case x::xs => t match {
+        case Nodo(_,_,hijos) =>
+          hijos.find(raiz(_) == x) match {
+            case Some(hijo) => pertenece(xs, hijo)
+            case None => false
           }
-        }
-    }
-    t match {
-      case Nodo(_, _, hijos) => pertenecerRec(s, hijos)
-      case _ => false
+        case _ => false
+      }
     }
   }
   
